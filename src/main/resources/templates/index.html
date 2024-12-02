@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<div th:replace="top :: header"></div>
+<body class="layui-layout-body">
+
+<div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <ul class="layui-nav layui-layout-left">
+                <li class="layui-nav-item layadmin-flexible" lay-unselect>
+                    <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+                        <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                    </a>
+                </li>
+            </ul>
+            <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+                <li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:;">
+                        <cite><span th:text="${user.username}"></span></cite>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a lay-href="userInfo">基本资料</a></dd>
+                        <dd><a lay-href="resetPwd">修改密码</a></dd>
+                        <hr>
+                        <dd style="text-align: center;"><a th:href="@{/logout}">退出</a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:;" layadmin-event="refresh" title="刷新">
+                        <i class="layui-icon layui-icon-refresh-3"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 侧边菜单 -->
+        <div class="layui-side layui-side-menu">
+            <div class="layui-side-scroll">
+                <div class="layui-logo">
+                    <span>养老院信息管理系统</span>
+                </div>
+
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+                    <li data-name="home" class="layui-nav-item layui-nav-itemed">
+                        <a href="javascript:;" lay-tips="管理菜单" lay-direction="2">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <cite>管理菜单</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="client" th:if="${user.role == 'admin'}">
+                                <a lay-href="/user">用户管理</a>
+                            </dd>
+                            <!--<dd data-name="client">-->
+                                <!--<a lay-href="/TB">贴吧</a>-->
+                            <!--</dd>-->
+                            <dd data-name="oldMan" th:if="${user.role == 'admin'}">
+                                <a lay-href="/oldMan">老人管理</a>
+                            </dd>
+                            <dd data-name="oldMan" th:if="${flag == '2'&& user.role == 'user'}">
+                                <a lay-href="/oldMan/create">老人信息</a>
+                            </dd>
+                            <dd data-name="oldMan" th:if="${flag == '1'&& user.role == 'user'}">
+                                <a lay-href="/oldMan/info">老人信息</a>
+                            </dd>
+                            <dd data-name="question" th:if="${user.role == 'admin'}">
+                            <a lay-href="/question">反馈管理</a>
+                            </dd>
+                            <dd data-name="question" th:if="${user.role == 'user'}">
+                                <a lay-href="/question/create">意见反馈</a>
+                            </dd>
+                            <dd data-name="worker" th:if="${user.role == 'admin'}">
+                                <a lay-href="/worker">护工管理</a>
+                            </dd>
+                            <dd data-name="leave" th:if="${user.role == 'admin'}">
+                                <a lay-href="/leave">外出管理</a>
+                            </dd>
+                            <dd data-name="leave" th:if="${user.role == 'user'}">
+                                <a lay-href="/leave/oneList">外出情况</a>
+                            </dd>
+                            <dd data-name="room" th:if="${user.role == 'admin'}">
+                                <a lay-href="/room">房间管理</a>
+                            </dd>
+                            <dd data-name="room" th:if="${user.role == 'admin'}">
+                                <a lay-href="/healthy">健康档案管理</a>
+                            </dd>
+                            <dd data-name="room" th:if="${healthy == 'healthy'}">
+                                <input id="healthy" th:value="${id}" hidden>
+                                <a onclick="getDown()" >健康档案管理</a>
+                            </dd>
+                            <dd data-name="meal" >
+                                <a lay-href="/meal">膳食管理</a>
+                            </dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 页面标签 -->
+        <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+            <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage" style="right:0;"></div>
+            <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+                <ul class="layui-tab-title" id="LAY_app_tabsheader">
+                    <li class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 主体内容 -->
+        <div class="layui-body" id="LAY_app_body">
+            <div class="layadmin-tabsbody-item layui-show">
+                <iframe th:src="@{/home}" frameborder="0" class="layadmin-iframe"></iframe>
+            </div>
+        </div>
+
+        <!-- 辅助元素，一般用于移动设备下遮罩 -->
+        <div class="layadmin-body-shade" layadmin-event="shade"></div>
+    </div>
+</div>
+
+<script th:src="@{/layuiadmin/layui/layui.js}"></script>
+<script>
+    layui.config({
+        base: './layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index');
+    layui.use(['form', 'layedit', 'laydate', "jquery"], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery
+            , laydate = layui.laydate;
+        getDown = function () {
+            var id = $('#healthy').val();
+            window.location.href = '/healthy/' + id + '/down';
+
+        }
+    })
+</script>
+</body>
+</html>
+
+

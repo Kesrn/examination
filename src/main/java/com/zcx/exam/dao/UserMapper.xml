@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zcx.exam.dao.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.zcx.exam.entity.User" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="username" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="status" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="salt" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="sex" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="role" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="mobile" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="create_by" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_by" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, username, password, status, salt, sex, role, mobile, create_date, create_by,
+    update_date, update_by, remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from yly_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    UPDATE yly_user set  status = "1"
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <insert id="insert" parameterType="com.zcx.exam.entity.User" >
+    insert into yly_user (id, username, password, 
+      status, salt, sex, role, 
+      mobile, create_date, create_by,
+      update_date, update_by, remark
+      )
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{role,jdbcType=CHAR}, 
+      #{mobile,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zcx.exam.entity.User" >
+    insert into yly_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="role != null" >
+        role,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=CHAR},
+      </if>
+      <if test="role != null" >
+        #{role,jdbcType=CHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zcx.exam.entity.User" >
+    update yly_user
+    <set >
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="role != null" >
+        role = #{role,jdbcType=CHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zcx.exam.entity.User" >
+    update yly_user
+    set username = #{username,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=CHAR},
+      role = #{role,jdbcType=CHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from yly_user
+    where username = #{username,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" parameterType="java.util.HashMap" resultType="com.zcx.exam.entity.User">
+
+    SELECT
+    id,
+    username,
+    mobile,
+    `status`,
+    sex,
+    create_date AS createDate,
+    remark
+    FROM
+    yly_user
+    WHERE
+    1=1
+    <if test="username != null and username != ''" >
+    AND username LIKE concat('%',#{username,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="mobile != null and mobile != ''" >
+    AND mobile LIKE concat('%',#{mobile,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="startDate !=null and startDate != ''">
+      <![CDATA[   and UNIX_TIMESTAMP(create_date) >=  UNIX_TIMESTAMP(#{startDate})  ]]>
+    </if>
+    <if test="endDate !=null and endDate != ''">
+      <![CDATA[   and UNIX_TIMESTAMP(create_date) <=  UNIX_TIMESTAMP(#{endDate})  ]]>
+    </if>
+    and status = "0"
+    order by
+    create_date desc
+  </select>
+  <select id="queryUserStatus" resultType="java.lang.String" parameterType="java.lang.String">
+    select `status`
+    FROM yly_user
+    WHERE username = #{username,jdbcType=VARCHAR}
+  </select>
+  <select id="findByNmeCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+    SELECT count(1) from yly_user WHERE mobile = #{mobile,jdbcType=VARCHAR}
+  </select>
+</mapper>

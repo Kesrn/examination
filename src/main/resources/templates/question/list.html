@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="header">
+    <meta charset="utf-8">
+    <title>反馈管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+</head>
+<body>
+<style>
+    .layui-card-header{
+        text-align: right;
+    }
+    .layui-table-page>div{
+        text-align: center;
+    }
+</style>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header" align="left">
+                    用户名称：
+                    <div class="layui-inline">
+                        <input class="layui-input" style="height: 32px;width: 172px;" name="createBy" id="createBy" autocomplete="off" placeholder="请输入用户名">
+                    </div>
+                    问题类型：
+                    <div class="layui-inline">
+
+                        <select class="layui-input" style="height: 32px; width: 100px;" name="questionType" id="questionType" autocomplete="off">
+                            <option value="" >全部</option>
+                            <option value="0" th:selected="${questionType eq '0'}">产品建议</option>
+                            <option value="1" th:selected="${questionType eq '1'}">功能异常</option>
+                            <option value="2" th:selected="${questionType eq '2'}">体验不佳</option>
+                            <option value="3" th:selected="${questionType eq '3'}">其他</option>
+                        </select>
+                    </div>
+                    问题状态：
+                    <div class="layui-inline">
+
+                        <select class="layui-input" style="height: 32px; width: 100px;" name="questionStatus" id="questionStatus" autocomplete="off">
+                            <option value="">全部</option>
+                            <option value="1" th:selected="${questionStatus eq '1'}">未解决</option>
+                            <option value="2" th:selected="${questionStatus eq '2'}">已解决</option>
+                        </select>
+                    </div>
+                    &nbsp;
+                    反馈时间:
+                    <div class="layui-inline">
+                        <input class="layui-input" style="height: 32px; width: 100px;" name="startDate" lay-verify="required" id="startDate" placeholder="开始日期" autocomplete="off" readonly="readonly" th:value="${startDate}">
+                    </div>
+                    -
+                    <div class="layui-inline">
+                        <input  class="layui-input" style="height: 32px; width: 100px;" name="endDate" lay-verify="required" id="endDate" placeholder="结束日期" autocomplete="off" readonly="readonly" th:value="${endDate}">
+                    </div>
+                    &nbsp;
+                    <button class="layui-btn layui-btn-sm" data-type="reload" id="search">搜索</button>
+                    <button class="layui-btn layui-btn-sm" id="btnExport">导出</button>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="test" lay-filter="test">
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="updateStatus">解决</a>
+
+
+
+
+</script>
+<script th:src="@{/layuiadmin/lib/jquery.js}"></script><!--min.-->
+<script th:src="@{/layuiadmin/layui/layui.js}"></script>
+<script>
+    layui.use(['form', 'layedit', 'laydate', "jquery"], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery
+            , laydate = layui.laydate;
+        //日期
+        var start = laydate.render({ //开始日期
+            elem: '#startDate',
+            done: function (value, date) {
+                endMax = end.config.max;
+                end.config.min = date;
+                end.config.min.month = date.month - 1;
+            }
+        });
+        var end = laydate.render({ //结束日期
+            elem: '#endDate',
+            done: function (value, date) {
+                if ($.trim(value) == '') {
+                    var curDate = new Date();
+                    date = {
+                        'date': curDate.getDate(),
+                        'month': curDate.getMonth() + 1,
+                        'year': curDate.getFullYear()
+                    };
+                }
+                start.config.max = date;
+                start.config.max.month = date.month - 1;
+            }
+        });
+    });
+    layui.use('table',function () {
+
+        var table = layui.table;
+
+        var tableIns = table.render({
+            elem:'#test'
+            ,url:'/question/questionList'
+            ,title:'意见反馈表'
+            ,cellMinWidth: 80
+            ,cols: [
+                [
+                    {field:'xuhao', title: '序号',type:'numbers'}
+                    ,{field: 'createBy', title: '反馈用户'}
+                    ,{field: 'questionType', title: '反馈类型'}
+                    ,{field: 'contactInfo', title: '联系方式'}
+                    ,{field: 'createTime', title: '反馈时间'}
+                    ,{field: 'questionStatus', title: '问题状态'}
+                    ,{fixed: 'right', title:'操作', toolbar: '#barDemo'}
+                ]
+            ]
+            ,page: true
+            ,height: 565
+            ,id: 'user-table-reload'
+            ,where:{name:'[[${createBy}]]'}
+        });
+
+
+        var active = {
+            reload: function(){
+                //执行重载
+                var createBy = $('#createBy').val();
+                var questionType = $('#questionType option:selected').val();
+                var questionStatus = $('#questionStatus option:selected').val();
+                var startDate = $('#startDate').val();
+                var endDate = $('#endDate').val();
+                table.reload('user-table-reload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        createBy:createBy,
+                        questionType: questionType,
+                        questionStatus:questionStatus,
+                        startDate:startDate,
+                        endDate:endDate
+                    }
+                });
+            }
+        };
+
+
+        // 导出操作
+        $('#btnExport').click(function () {
+            var createBy = $('#createBy').val();
+            var questionType = $('#questionType option:selected').val();
+            var questionStatus = $('#questionStatus option:selected').val();
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+            var count = $('.layui-laypage-count').html().length;
+            if(count > 7){
+                layer.alert("导出操作最多导出1000条数据，当前列表信息条数太多，请设置筛选条件后重新尝试导出！", {icon: 2});
+            }else{
+                window.location.href = "/question/exportQuestionData?createBy="+createBy+"&questionType="+questionType+"&questionStatus="+questionStatus+"&startDate="+startDate+"&endDate="+endDate;
+            }
+        });
+
+        $('#search').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        table.on('tool(test)', function(obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            // 删除
+
+            if (layEvent === 'updateStatus') {
+                if(data.questionStatus==='已解决'){
+                    layer.alert("该问题已解决，请勿重复操作！", {icon: 2});
+                    return;
+                }
+                layer.confirm('确定该问题解决了吗？', {
+                    btn: ['确定', '再看看']
+                    , icon: 3
+                }, function (index, layero) {
+                    $.ajax({
+                        url: '/question/' + data.id + '/update'
+                        , type: 'post'
+                        , success: function (result) {
+                            layer.alert(result.msg, {icon: 1});
+                            table.reload('user-table-reload', {});
+                        }
+                        , error: function (msg) {
+                            layer.alert(msg, {icon: 2});
+                        }
+                    });
+                });
+            }else if(layEvent === 'detail'){
+                window.location.href = '/question/'+data.id+'/detail';
+            }
+        })
+    });
+
+
+
+
+</script>
+
+
+</body>
+</html>

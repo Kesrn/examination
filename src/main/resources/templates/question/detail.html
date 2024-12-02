@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <style>
+        .imgshow{
+            display: inline-block;
+            width: 150px;
+            height:150px;
+            border:1px solid #ccc;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .imgshow img{
+            height: 100%;
+        }
+        .layui-card .layui-form-label{
+            width: 120px;
+        }
+    </style>
+    <meta charset="utf-8">
+    <title>问题详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+    <legend>问题详情</legend>
+</fieldset>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">问题截图(点击图片可放大)</label>
+                    <div class="layui-input-inline" style="width: 60%;">
+                        <div class="layui-upload-list" style="float: left;width: 30%;text-align: center;">
+                            <div class="imgshow" id="photo-list">
+                                <img class="layui-upload-img" id="demo1" th:src="@{/upload/{path}(path=${path})}">
+                            </div>
+                            <input type="hidden" th:value="${path}" id="path1"/>
+                             </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">问题描述</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="questionDesc" style="width: 200px;height:100px;" th:value="${question.questionDesc}" id="questionDesc" autocomplete="off" placeholder="请输入备注" class="layui-input" readonly>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                      <button type="button" id="cancel" class="layui-btn layui-btn-danger layui-btn-sm" >返回</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/layuiadmin/lib/jquery.js}"></script>
+<script th:src="@{/layuiadmin/layui/layui.js}"></script>
+
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var table = layui.table
+            , $ = layui.$
+            , form = layui.form;
+        $('#cancel').click(function () {
+            window.location.href="/question";
+        });
+        $(function () {
+            $('#photo-list img').on('click', function () {
+                layer.photos({
+                    photos: '#photo-list',
+                    shadeClose: false,
+                    closeBtn: 2,
+                    full: true,
+                    anim: 0
+                });
+            })
+        });
+
+    });
+
+
+
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zcx.exam.dao.QuestionMapper" >
+  <resultMap id="BaseResultMap" type="com.zcx.exam.entity.Question" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="question_type" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="question_desc" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="question_status" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="create_by" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="contact_info" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="is_del" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="question_pic" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, question_type,question_pic ,question_desc , question_status, create_time, create_by, contact_info,
+    is_del
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.zcx.exam.entityResult.QuestionBackResult" parameterType="java.lang.Integer" >
+    select
+    question_pic as questionPic,question_desc as questionDesc
+    from yly_question_back
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from yly_question_back
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zcx.exam.entity.Question" >
+    insert into yly_question_back (id, question_type, question_desc, 
+      question_status, create_time, create_by, 
+      contact_info, is_del)
+    values (#{id,jdbcType=INTEGER}, #{questionType,jdbcType=CHAR}, #{questionDesc,jdbcType=VARCHAR}, 
+      #{questionStatus,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{contactInfo,jdbcType=VARCHAR}, #{isDel,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zcx.exam.entity.Question" >
+    insert into yly_question_back
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="questionType != null" >
+        question_type,
+      </if>
+      <if test="questionDesc != null" >
+        question_desc,
+      </if>
+      <if test="questionStatus != null" >
+        question_status,
+      </if>
+      <if test="questionPic != null" >
+        question_pic,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="contactInfo != null" >
+        contact_info,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="questionType != null" >
+        #{questionType,jdbcType=CHAR},
+      </if>
+      <if test="questionDesc != null" >
+        #{questionDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="questionStatus != null" >
+        #{questionStatus,jdbcType=CHAR},
+      </if>
+      <if test="questionPic!= null" >
+        #{questionPic,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="contactInfo != null" >
+        #{contactInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zcx.exam.entity.Question" >
+    update yly_question_back
+    <set >
+      <if test="questionType != null" >
+        question_type = #{questionType,jdbcType=CHAR},
+      </if>
+      <if test="questionDesc != null" >
+        question_desc = #{questionDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="questionStatus != null" >
+        question_status = #{questionStatus,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="contactInfo != null" >
+        contact_info = #{contactInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zcx.exam.entity.Question" >
+    update yly_question_back
+    set question_type = #{questionType,jdbcType=CHAR},
+      question_desc = #{questionDesc,jdbcType=VARCHAR},
+      question_status = #{questionStatus,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      contact_info = #{contactInfo,jdbcType=VARCHAR},
+      is_del = #{isDel,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectAll" parameterType="java.util.HashMap" resultType="com.zcx.exam.entity.Question">
+
+    SELECT
+    id,
+    create_by as createBy,
+    question_type as questionType,
+    question_status as questionStatus,
+    contact_info as contactInfo,
+    create_time AS createTime
+    FROM
+    yly_question_back
+    WHERE
+    1=1
+    <if test="createBy != null and createBy != ''" >
+      AND create_by LIKE concat('%',#{createBy,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="questionType != null and questionType != ''" >
+      AND question_type = #{questionType,jdbcType=VARCHAR}
+    </if>
+    <if test="questionStatus != null and questionStatus != ''" >
+      AND question_status = #{questionStatus,jdbcType=VARCHAR}
+    </if>
+    <if test="startDate !=null and startDate != ''">
+      <![CDATA[   and UNIX_TIMESTAMP(create_time) >=  UNIX_TIMESTAMP(#{startDate})  ]]>
+    </if>
+    <if test="endDate !=null and endDate != ''">
+      <![CDATA[   and UNIX_TIMESTAMP(create_time) <=  UNIX_TIMESTAMP(#{endDate})  ]]>
+    </if>
+    AND is_del = '0'
+    order by
+    create_time desc
+  </select>
+  <update id="updateStatus" parameterType="java.lang.Integer">
+    UPDATE yly_question_back SET question_status = '2'
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
