@@ -35,19 +35,18 @@ public class ResetPwdController {
     @PostMapping("/resetPwdok")
     @ResponseBody
     public ResultBody doalter(@RequestParam String pwold, @RequestParam String pwnew, Model model){
-        ResultBody resultBody = new ResultBody();
         try {
             Subject subject = SecurityUtils.getSubject();
             User user = (User)subject.getPrincipal();
             boolean ret = resetPwdService.resetpassword(pwold,pwnew,user.getUsername());
             if(ret){
-                return resultBody.success(new ArrayList<>(),"密码修改成功");
+                return ResultBody.success(new ArrayList<>(),"密码修改成功");
             }
         }catch (Exception ex) {
-            return resultBody.failure("密码修改失败,原密码错误");
+            return ResultBody.failure("密码修改失败,原密码错误");
         }
         //return "resetPwd/ok";
-        return resultBody.failure("密码修改失败，原密码错误");
+        return ResultBody.failure("密码修改失败，原密码错误");
     }
     @GetMapping("/userInfo")
     public String userInfo(Model model){

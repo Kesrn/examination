@@ -35,7 +35,7 @@ public class ResultBody {
         return resultBody;
     }
 
-    public ResultBody success(Object data,String msg) {
+    public static ResultBody success(Object data,String msg) {
         ResultBody resultBody = new ResultBody();
         resultBody.setCode(Consts.SUCCESS);
         resultBody.setMsg(msg);
@@ -43,7 +43,7 @@ public class ResultBody {
         return resultBody;
     }
 
-    public ResultBody failure(String msg) {
+    public static ResultBody failure(String msg) {
         ResultBody resultBody = new ResultBody();
         resultBody.setCode(Consts.FAILURE);
         resultBody.setData(null);

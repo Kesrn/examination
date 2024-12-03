@@ -31,7 +31,7 @@
                     <img th:src="@{/getValidateCode}" id="validateCodeImg" style="cursor: pointer;float: right;height: 33px;" title="点击图片刷新" onclick="$(this).attr('src','/getValidateCode?'+new Date().getTime());">
                 </div>
                 <div class="layui-form-item">
-                <a th:href="@{/initUser}">还没注册？点击注册!</a>
+                    <a th:href="@{/initUser}">还没注册？点击注册!</a>
                 </div>
                 <div class="layui-form-item">
                     <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
@@ -51,6 +51,38 @@
     }).use('index');
     if(window.top != window.self){
         top.location.href = location.href;
+    }
+
+    function submitForm(event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+
+        const form = document.getElementById('loginForm');
+        const formData = new FormData(form);
+
+        const loginData = {
+            username: formData.get('username'),
+            password: formData.get('password'),
+            validateCode: formData.get('validateCode')
+        };
+
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(loginData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/dashboard'; // 登录成功后跳转到主页
+                } else {
+                    alert('登录失败: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
 </script>
 </body>

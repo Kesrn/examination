@@ -93,7 +93,7 @@ public class QuestionController {
             return  resultBody;
         }catch (Exception e){
             e.printStackTrace();
-            return resultBody.failure("查询失败！");
+            return ResultBody.failure("查询失败！");
         }
     }
 
@@ -108,10 +108,10 @@ public class QuestionController {
         ResultBody resultBody = new ResultBody();
         try {
             questionService.updateStatus(id);
-            return resultBody.success(new ArrayList<>(),"更新成功！");
+            return ResultBody.success(new ArrayList<>(),"更新成功！");
         }catch (Exception e){
             e.printStackTrace();
-            return resultBody.failure("更新失败，请重试！");
+            return ResultBody.failure("更新失败，请重试！");
         }
     }
     @GetMapping(ApiConst.API_QUESTION_DETAIL)
@@ -139,10 +139,10 @@ public class QuestionController {
             question.setQuestionPic(filePath);
             questionService.addQuestionPaper(question);
 
-            return resultBody.success(new ArrayList<>(),"已收到您的反馈信息！");
+            return ResultBody.success(new ArrayList<>(),"已收到您的反馈信息！");
         }catch (Exception e){
             e.printStackTrace();
-            return resultBody.failure("系统正忙，请稍后再试！");
+            return ResultBody.failure("系统正忙，请稍后再试！");
         }
     }
 
@@ -167,7 +167,7 @@ public class QuestionController {
         }
         Map<Object, Object> map = new HashMap<>();
         map.put("filepath", savePath + saveName);
-        return resultBody.success(map, "上传成功");
+        return ResultBody.success(map, "上传成功");
     }
 
     @GetMapping("/exportQuestionData")

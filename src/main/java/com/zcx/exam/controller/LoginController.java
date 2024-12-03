@@ -6,8 +6,10 @@ import com.zcx.exam.entity.User;
 import com.zcx.exam.service.LoginService;
 import com.zcx.exam.service.UserService;
 import com.zcx.exam.utils.CookieUtils;
+import com.zcx.exam.utils.JsonUtil;
 import com.zcx.exam.utils.LogUtil;
 import com.zcx.exam.utils.ValidateCodeUtils;
+import com.zcx.exam.vo.LoginVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -39,27 +41,25 @@ public class LoginController {
         return "login/login";
     }
 
-    @PostMapping(ApiConst.API_LOGIN)
-    public String onLogin(@RequestParam String username,
-                          @RequestParam String password,
-                          @RequestParam String validateCode,
+    @PostMapping(value = ApiConst.API_LOGIN)
+    public String onLogin(LoginVo loginVo,
                           HttpServletRequest request,
                           Model model) {
 
         try {
-            LogUtil.warn(this.getClass(), "登录信息入参："+validateCode);
+            LogUtil.warn(this.getClass(), "登录信息入参："+ JsonUtil.toJson(loginVo));
             Subject subject = SecurityUtils.getSubject();
             if (!subject.isAuthenticated()) {
                 // 获取cookie中的validateCode键值
                 String validateCodeUUid = CookieUtils.getCookie(request, "validateCodeUUid");
                 String validateCode1 = (String) request.getSession().getAttribute(validateCodeUUid);
-                if (!validateCode.equalsIgnoreCase(validateCode1)) {
+                if (!loginVo.getValidateCode().equalsIgnoreCase(validateCode1)) {
                     model.addAttribute("errMsg", "验证码错误");
                     LogUtil.warn(this.getClass(), "验证码错误");
                     return "login/login";
                 }
                 // todo 增加查询用户状态
-                String status = loginService.queryUserStatus(username);
+                String status = loginService.queryUserStatus(loginVo.getUsername());
                 if ("1".equals(status)) {
                     model.addAttribute("errMsg", "不存在该用户，请重新登录");
                     LogUtil.warn(this.getClass(), "不存在该用户，请重新登录");
@@ -67,8 +67,8 @@ public class LoginController {
                 }
 
                 UsernamePasswordToken token = new UsernamePasswordToken();
-                token.setUsername(username);
-                token.setPassword(password.toCharArray());
+                token.setUsername(loginVo.getUsername());
+                token.setPassword(loginVo.getPassword().toCharArray());
 
                 subject.login(token);
             }
@@ -89,8 +89,10 @@ public class LoginController {
         } catch (AuthenticationException ex) {
             LogUtil.error(this.getClass(), "登录失败: 系统繁忙，请稍后再试", ex);
             model.addAttribute("errMsg", "系统繁忙，请稍后再试");
+        } catch(Exception e){
+            LogUtil.error(this.getClass(), "登录失败: 系统繁忙，请稍后再试", e);
+            model.addAttribute("errMsg", "系统繁忙，请稍后再试");
         }
-
         return "login/login";
     }
 
@@ -138,14 +140,14 @@ public class LoginController {
             Integer i = userService.findByNameCount(user.getMobile());
             if (i != 0) {
                 LogUtil.warn(this.getClass(), "该手机号已被注册，请您更换其他手机号进行注册！");
-                return resultBody.failure("该手机号已被注册，请您更换其他手机号进行注册！");
+                return ResultBody.failure("该手机号已被注册，请您更换其他手机号进行注册！");
             }
             userService.initUser(user);
             LogUtil.info(this.getClass(), "用户 {"+user.getUsername()+"} 注册成功" );
         } catch (Exception e) {
             LogUtil.error(this.getClass(), "注册失败: {"+e.getMessage()+"}", e);
-            return resultBody.failure("注册失败，请重试！");
+            return ResultBody.failure("注册失败，请重试！");
         }
-        return resultBody.success(new ArrayList<>(), "注册成功！");
+        return ResultBody.success(new ArrayList<>(), "注册成功！");
     }
 }
