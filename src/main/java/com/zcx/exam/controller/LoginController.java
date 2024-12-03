@@ -1,14 +1,14 @@
 package com.zcx.exam.controller;
 
-
 import com.zcx.exam.common.ApiConst;
 import com.zcx.exam.common.ResultBody;
 import com.zcx.exam.entity.User;
 import com.zcx.exam.service.LoginService;
 import com.zcx.exam.service.UserService;
 import com.zcx.exam.utils.CookieUtils;
-import com.zcx.exam.utils.ObjectUtils;
+import com.zcx.exam.utils.LogUtil;
 import com.zcx.exam.utils.ValidateCodeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
@@ -24,10 +24,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-//登录模块
+// 登录模块
 @Controller
+@Slf4j
 public class LoginController {
-
 
     @Autowired
     private LoginService loginService;
@@ -47,19 +47,22 @@ public class LoginController {
                           Model model) {
 
         try {
+            LogUtil.warn(this.getClass(), "登录信息入参："+validateCode);
             Subject subject = SecurityUtils.getSubject();
             if (!subject.isAuthenticated()) {
-                //获取cookie中的validateCode键值
-                String validateCodeUUid = CookieUtils.getCookie(request,"validateCodeUUid");
+                // 获取cookie中的validateCode键值
+                String validateCodeUUid = CookieUtils.getCookie(request, "validateCodeUUid");
                 String validateCode1 = (String) request.getSession().getAttribute(validateCodeUUid);
-                if(!validateCode.equalsIgnoreCase(validateCode1)){
-                    model.addAttribute("errMsg","验证码错误");
+                if (!validateCode.equalsIgnoreCase(validateCode1)) {
+                    model.addAttribute("errMsg", "验证码错误");
+                    LogUtil.warn(this.getClass(), "验证码错误");
                     return "login/login";
                 }
-                //todo 增加查询用户状态
+                // todo 增加查询用户状态
                 String status = loginService.queryUserStatus(username);
-                if("1".equals(status)){
-                    model.addAttribute("errMsg","不存在该用户，请重新登录");
+                if ("1".equals(status)) {
+                    model.addAttribute("errMsg", "不存在该用户，请重新登录");
+                    LogUtil.warn(this.getClass(), "不存在该用户，请重新登录");
                     return "login/login";
                 }
 
@@ -69,21 +72,22 @@ public class LoginController {
 
                 subject.login(token);
             }
-            model.addAttribute("model","9,999,666");
+            model.addAttribute("model", "9,999,666");
             User user = (User) subject.getPrincipal();
             model.addAttribute("user", user);
+            LogUtil.info(this.getClass(), "用户 {"+user.getUsername()+"} 登录成功");
             return "index";
-        }catch (UnknownAccountException ex) {
-            ex.printStackTrace();
+        } catch (UnknownAccountException ex) {
+            LogUtil.error(this.getClass(), "登录失败: 用户名或密码错误", ex);
             model.addAttribute("errMsg", "用户名或密码错误");
-        }catch (IncorrectCredentialsException ex) {
-            ex.printStackTrace();
+        } catch (IncorrectCredentialsException ex) {
+            LogUtil.error(this.getClass(), "登录失败: 用户名或密码错误", ex);
             model.addAttribute("errMsg", "用户名或密码错误");
-        }catch (LockedAccountException ex) {
-            ex.printStackTrace();
+        } catch (LockedAccountException ex) {
+            LogUtil.error(this.getClass(), "登录失败: 用户已被锁定，请联系管理员处理", ex);
             model.addAttribute("errMsg", "用户已被锁定，请联系管理员处理");
-        }catch (AuthenticationException ex) {
-            ex.printStackTrace();
+        } catch (AuthenticationException ex) {
+            LogUtil.error(this.getClass(), "登录失败: 系统繁忙，请稍后再试", ex);
             model.addAttribute("errMsg", "系统繁忙，请稍后再试");
         }
 
@@ -92,7 +96,6 @@ public class LoginController {
 
     @GetMapping(ApiConst.API_HOME_CONSOLE)
     public String onHome() {
-
         return "home/console";
     }
 
@@ -100,7 +103,7 @@ public class LoginController {
     public String onLogout() {
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-
+        LogUtil.info(this.getClass(), "用户已注销");
         return "login/login";
     }
 
@@ -112,35 +115,37 @@ public class LoginController {
      */
     @RequestMapping("/getValidateCode")
     public void getValidateCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //生成uuid随机字符串，并保存到cookie中
+        // 生成uuid随机字符串，并保存到cookie中
         String uuid = UUID.randomUUID().toString();
         Cookie validateCodeUUid = new Cookie("validateCodeUUid", uuid);
         response.addCookie(validateCodeUUid);
-        //生成图形验证码，并保存到缓存中
+        // 生成图形验证码，并保存到缓存中
         String s = ValidateCodeUtils.createImage(request, response);
-//        Cache cache = cacheManager.getCache("validateCode-cache");
-//        cache.put(uuid,s);
-        request.getSession().setAttribute(uuid,s);
+        request.getSession().setAttribute(uuid, s);
+        LogUtil.info(this.getClass(), "生成图形验证码: {"+s+"}");
     }
 
     @RequestMapping("/initUser")
-    public String toAdd(){
+    public String toAdd() {
         return "user/register";
     }
+
     @PostMapping("/initUser")
     @ResponseBody
-    public ResultBody userAdd(User user, HttpServletRequest request){
+    public ResultBody userAdd(User user, HttpServletRequest request) {
         ResultBody resultBody = new ResultBody();
-        try{
+        try {
             Integer i = userService.findByNameCount(user.getMobile());
             if (i != 0) {
+                LogUtil.warn(this.getClass(), "该手机号已被注册，请您更换其他手机号进行注册！");
                 return resultBody.failure("该手机号已被注册，请您更换其他手机号进行注册！");
             }
             userService.initUser(user);
-        }catch (Exception e){
-            e.printStackTrace();
+            LogUtil.info(this.getClass(), "用户 {"+user.getUsername()+"} 注册成功" );
+        } catch (Exception e) {
+            LogUtil.error(this.getClass(), "注册失败: {"+e.getMessage()+"}", e);
             return resultBody.failure("注册失败，请重试！");
         }
-        return resultBody.success(new ArrayList<>(),"注册成功！");
+        return resultBody.success(new ArrayList<>(), "注册成功！");
     }
 }

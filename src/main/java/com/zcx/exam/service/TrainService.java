@@ -1,8 +1,7 @@
 package com.zcx.exam.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
 public interface TrainService {
 
 

@@ -38,7 +38,7 @@
         <div class="layui-side layui-side-menu">
             <div class="layui-side-scroll">
                 <div class="layui-logo">
-                    <span>养老院信息管理系统</span>
+                    <span>轩梦在线考试系统</span>
                 </div>
 
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
@@ -51,45 +51,11 @@
                             <dd data-name="client" th:if="${user.role == 'admin'}">
                                 <a lay-href="/user">用户管理</a>
                             </dd>
-                            <!--<dd data-name="client">-->
-                                <!--<a lay-href="/TB">贴吧</a>-->
-                            <!--</dd>-->
-                            <dd data-name="oldMan" th:if="${user.role == 'admin'}">
-                                <a lay-href="/oldMan">老人管理</a>
-                            </dd>
-                            <dd data-name="oldMan" th:if="${flag == '2'&& user.role == 'user'}">
-                                <a lay-href="/oldMan/create">老人信息</a>
-                            </dd>
-                            <dd data-name="oldMan" th:if="${flag == '1'&& user.role == 'user'}">
-                                <a lay-href="/oldMan/info">老人信息</a>
-                            </dd>
                             <dd data-name="question" th:if="${user.role == 'admin'}">
                             <a lay-href="/question">反馈管理</a>
                             </dd>
                             <dd data-name="question" th:if="${user.role == 'user'}">
                                 <a lay-href="/question/create">意见反馈</a>
-                            </dd>
-                            <dd data-name="worker" th:if="${user.role == 'admin'}">
-                                <a lay-href="/worker">护工管理</a>
-                            </dd>
-                            <dd data-name="leave" th:if="${user.role == 'admin'}">
-                                <a lay-href="/leave">外出管理</a>
-                            </dd>
-                            <dd data-name="leave" th:if="${user.role == 'user'}">
-                                <a lay-href="/leave/oneList">外出情况</a>
-                            </dd>
-                            <dd data-name="room" th:if="${user.role == 'admin'}">
-                                <a lay-href="/room">房间管理</a>
-                            </dd>
-                            <dd data-name="room" th:if="${user.role == 'admin'}">
-                                <a lay-href="/healthy">健康档案管理</a>
-                            </dd>
-                            <dd data-name="room" th:if="${healthy == 'healthy'}">
-                                <input id="healthy" th:value="${id}" hidden>
-                                <a onclick="getDown()" >健康档案管理</a>
-                            </dd>
-                            <dd data-name="meal" >
-                                <a lay-href="/meal">膳食管理</a>
                             </dd>
                         </dl>
                     </li>

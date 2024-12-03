@@ -2,6 +2,7 @@ package com.zcx.exam.dao;
 
 import com.zcx.exam.entity.Question;
 import com.zcx.exam.entityResult.QuestionBackResult;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 import java.util.Map;
